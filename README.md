@@ -1,6 +1,7 @@
 A simple application that allows to send prompts to an LLM API and receive responses.
+Simply type your prompt into the box and press the button!
 
-
+>How to install and run on local<
 1. **Visit OpenRouter**: https://openrouter.ai/
 2. **Create a free account**
 3. **Get your API key** 
