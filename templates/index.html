@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CHAT</title>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Hello AI 🤖</h1>
+        <p>Ask anything and get responses from an AI language model:</p>
+        
+        <textarea id="promptInput" placeholder="Type your prompt here..."></textarea>
+        <br>
+        <button id="askButton" onclick="askAI()">Ask AI</button>
+        
+        <div id="responseArea"></div>
+    </div>
+
+    <script>
+        async function askAI() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            const button = document.getElementById('askButton');
+            const responseArea = document.getElementById('responseArea');
+            
+            if (!prompt) {
+                responseArea.innerHTML = '<div class="response error">Please enter a prompt</div>';
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'Thinking...';
+            responseArea.innerHTML = '<div class="response loading">AI is thinking...</div>';
+            
+            try {
+                const response = await fetch('/ask-ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseArea.innerHTML = `<div class="response"><strong>AI Response:</strong><br>${data.response}</div>`;
+                } else {
+                    responseArea.innerHTML = `<div class="response error"><strong>Error:</strong> ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                responseArea.innerHTML = `<div class="response error"><strong>Network Error:</strong> ${error.message}</div>`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Ask AI';
+            }
+        }
+        
+        // Allow pressing Enter to submit
+        document.getElementById('promptInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askAI();
+            }
+        });
+    </script>
+</body>
+</html>
